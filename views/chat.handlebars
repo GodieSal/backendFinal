@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat de texto</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        function sendMessage() {
+            const user = document.getElementById('user').value;
+            const message = document.getElementById('message').value;
+
+            socket.emit('sendMessage', { user, message });
+        }
+
+        socket.on('newMessage', (message) => {
+            const messageList = document.getElementById('message-list');
+            const newMessage = document.createElement('li');
+            newMessage.innerText = `${message.user}: ${message.message}`;
+            messageList.appendChild(newMessage);
+        });
+    </script>
+</head>
+<body>
+    <h1>Chatee con un agente en tiempo real</h1>
+    <ul id="message-list"></ul>
+
+    <h2>Enviar mensaje</h2>
+    <label for="user">Usuario:</label>
+    <input type="text" id="user">
+    <label for="message">Mensaje:</label>
+    <input type="text" id="message">
+    <button onclick="sendMessage()">Enviar</button>
+</body>
+</html>

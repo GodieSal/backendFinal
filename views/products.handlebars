@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lista de Productos</title>
+</head>
+<body>
+    <h1>Lista de Productos</h1>
+    <ul>
+        {{#each products}}
+        <li>
+            {{this.nombre}} - Precio: {{this.precio}}
+            <form action="/api/cart/{{carritoId}}/products/{{this._id}}" method="POST">
+                <label for="quantity">Cantidad:</label>
+                <input type="number" id="quantity" name="quantity" min="1" value="1">
+                <button type="submit">Agregar al Carrito</button>
+            </form>
+        </li>
+        {{/each}}
+    </ul>
+</body>
+</html>
