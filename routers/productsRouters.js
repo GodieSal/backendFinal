@@ -4,13 +4,12 @@ const fs = require("fs");
 const { v4: uuidv4 } = require('uuid');
 const Product = require('../dao/models/products'); 
 
-
 const todoslosProductos = JSON.parse(fs.readFileSync("./dao/filemanager/productos.json", "utf8", (error) => {
   throw Error(error);
 }));
 const products = [...todoslosProductos];
 
-// Obtener todos los productos
+
 routerProducts.get('/', async (req, res) => {
   const { limit = 10, page = 1, sort, query } = req.query;
   let filter = {};
@@ -21,7 +20,6 @@ routerProducts.get('/', async (req, res) => {
     }
   }
   
-
   const options = {
     limit: parseInt(limit),
     skip: (parseInt(page) - 1) * parseInt(limit),
@@ -31,7 +29,6 @@ routerProducts.get('/', async (req, res) => {
   try {
     const totalCount = await Product.countDocuments(filter);
     const totalPages = Math.ceil(totalCount / options.limit);
-
     const products = await Product.find(filter, null, options);
 
     const response = {
@@ -55,6 +52,21 @@ routerProducts.get('/', async (req, res) => {
 });
 
 
+routerProducts.get('/mockingproducts', (req, res) => {
+  const numProducts = 100; 
+  const mockedProducts = [];
+
+  for (let i = 0; i < numProducts; i++) {
+    const product = {
+      id: uuidv4(), 
+    };
+
+    mockedProducts.push(product);
+  }
+
+  res.json(mockedProducts);
+});
+
 routerProducts.get('/:pid', async (req, res) => {
   const { pid } = req.params;
 
@@ -71,7 +83,6 @@ routerProducts.get('/:pid', async (req, res) => {
   }
 });
 
-// Agregar un nuevo producto
 routerProducts.post('/', async (req, res) => {
   const nuevoProductoData = req.body;
 
@@ -83,7 +94,5 @@ routerProducts.post('/', async (req, res) => {
     res.status(500).send('Error al agregar producto');
   }
 });
-
-
 
 module.exports = routerProducts;
