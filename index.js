@@ -10,9 +10,11 @@ const app = express();
 const http = require("http").createServer(app);
 const io = require("socket.io")(http);
 const handlebars = require("express-handlebars").create({ defaultLayout: "main" });
-const fs = require("fs");
-const config = require('./config/');
-const { errorHandler } = require('.//dao/middlewares/errorHandler'); 
+const config = require('./config/'); 
+const { errorHandler } = require('./dao/middlewares/errorHandler'); 
+
+
+const User = require('./models/user'); 
 
 mongoose.connect(config.mongodbURI, {
   useNewUrlParser: true,
@@ -27,14 +29,14 @@ mongoose.connect(config.mongodbURI, {
 
 const authRoutes = require('./routes/authRoutes');
 app.use('/auth', authRoutes);
-const productRoutes = require('./routes/productRoutes');
-app.use('/products', productRoutes);
-const cartRoutes = require('./routes/cartRoutes'); 
+const productRoutes = require('./routes/productRoutes'); 
+app.use('/products', productRoutes); 
+const cartRoutes = require('./routes/cartRoutes');
 app.use('/carts', cartRoutes);
 app.engine("handlebars", handlebars.engine);
 app.set("view engine", "handlebars");
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true });
 app.use(express.static("public"));
 app.use(cookieParser());
 

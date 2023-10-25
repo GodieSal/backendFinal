@@ -1,6 +1,6 @@
 const UserDAO = require('./userDAO');
 
-class userRepository {
+class UserRepository {
   async createUser(userData) {
     try {
       return await UserDAO.createUser(userData);
@@ -40,6 +40,14 @@ class userRepository {
       throw error;
     }
   }
+
+  async updateUserRoleToPremium(userId) {
+    try {
+      return await UserDAO.updateUserRoleToPremium(userId);
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
-module.exports = new userRepository();
+module.exports = new UserRepository();

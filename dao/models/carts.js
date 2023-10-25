@@ -3,11 +3,16 @@ import mongoose from "mongoose";
 const cartsCollection = "carts"
 
 const cartsSchema = new mongoose.Schema({
-    productosCarrito: [
+    owner: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'admin', 
+        required: true
+    },
+    products: [
         {
-            producto: {
+            product: {
                 type: mongoose.Schema.Types.ObjectId,
-                ref: 'Productos', 
+                ref: 'Producto', 
                 required: true
             },
             quantity: {
