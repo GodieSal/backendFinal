@@ -1,13 +1,21 @@
 const express = require('express');
-const app = express();
+const router = express.Router();
+const UserController = require('../dao/controllers/userController');
+const multer = require('multer');
 
-
-
-const apiUsersRoutes = require('../api/apiUsers'); 
-app.use('/api', apiUsersRoutes);
-
-
-
-app.listen(3000, () => {
-  console.log('La aplicación está escuchando en el puerto 3000.');
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, './uploads/documents/');
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + '-' + file.originalname);
+  },
 });
+
+const upload = multer({ storage: storage });
+
+router.put('/users/premium/:userId', UserController.updateUserRoleToPremium);
+
+router.post('/users/:userId/documents', upload.array('documents', 5), UserController.uploadDocuments);
+
+module.exports = router;

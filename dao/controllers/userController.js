@@ -1,5 +1,19 @@
 const mongoose = require('mongoose');
-const UserRepository = require('.../repositories/userRepository');
+const UserRepository = require('../repositories/userRepository');
+const multer = require('multer');
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, './uploads/documents/');
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + '-' + file.originalname);
+  },
+});
+
+const upload = multer({ storage: storage });
+
+exports.uploadDocuments = upload.array('documents', 5);
 
 exports.getUserById = async (req, res) => {
   try {
@@ -36,8 +50,15 @@ exports.updateUserRoleToPremium = async (req, res) => {
       return res.status(404).json({ message: 'Usuario no encontrado' });
     }
 
+    if (!user.hasUploadedDocuments()) {
+      return res.status(400).json({ message: 'El usuario no ha terminado de cargar la documentación.' });
+    }
+
+    
+    user.last_connection = new Date();
+
     user.role = 'premium';
-    await UserRepository.updateUserRoleToPremium(userId); // Utiliza el método de UserRepository
+    await UserRepository.updateUserRoleToPremium(userId);
 
     res.json({ message: 'Rol de usuario actualizado a "premium"' });
   } catch (error) {

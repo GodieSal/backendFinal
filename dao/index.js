@@ -10,27 +10,10 @@ const app = express();
 const http = require("http").createServer(app);
 const io = require("socket.io")(http);
 const handlebars = require("express-handlebars").create({ defaultLayout: "main" });
-const config = require("./config/");
-const { errorHandler } = require("./dao/middlewares/errorHandler");
+const config = require("./dao/config");
+const { errorHandler } = require("./middlewares/errorHandler");
 const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
-
-
-const swaggerOptions = {
-  swaggerDefinition: {
-    info: {
-      title: "Api ecommerce",
-      version: "1.0.0",
-      description: "Tienda de materiales api.",
-    },
-  },
-  apis: ["./routes/*.js"],
-};
-
-
-const swaggerDocs = swaggerJsdoc(swaggerOptions);
-
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 const User = require("./models/user");
 
@@ -48,12 +31,35 @@ mongoose
     console.error("Error de conexión a MongoDB:", error);
   });
 
-const authRoutes = require("./routes/authRoutes");
+const authRoutes = require("../routes/authRoutes");
+const productRoutes = require("../routes/productRoutes");
+const cartRoutes = require("../routes/cartRoutes");
+
+// Agregado para las rutas de usuario
+const userRoutes = require("../routes/userRoutes");
+
+const swaggerOptions = {
+  swaggerDefinition: {
+    info: {
+      title: "Api ecommerce",
+      version: "1.0.0",
+      description: "Tienda de materiales api.",
+    },
+  },
+  apis: ["./routes/*.js"],
+};
+
+const swaggerDocs = swaggerJsdoc(swaggerOptions);
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+
 app.use("/auth", authRoutes);
-const productRoutes = require("./routes/productRoutes");
 app.use("/products", productRoutes);
-const cartRoutes = require("./routes/cartRoutes");
 app.use("/carts", cartRoutes);
+
+// Usar el nuevo router para las rutas de usuarios
+app.use("/users", userRoutes);
+
 app.engine("handlebars", handlebars.engine);
 app.set("view engine", "handlebars");
 app.use(express.json());
